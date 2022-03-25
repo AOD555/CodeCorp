@@ -1,0 +1,39 @@
+
+# Link to youtube video
+# https://www.youtube.com/watch?v=rE_bJl2GAY8
+
+from cgi import test
+from matplotlib.colors import LightSource
+from termcolor import colored
+import pymongo
+from pymongo import MongoClient
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import json
+from bson import ObjectId
+from bson.json_util import dumps
+
+
+cluster = MongoClient(
+    "mongodb+srv://discoBall:discoAdmin@test.rcww4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+
+db = cluster["DiscoBall"]
+collection = db["Tests"]
+
+
+var2 = []   # Main variable used to find specific events
+# eventsFailed = []
+# totalEvents = []
+failedEvents = []
+
+# This is the filterering criteria of what we want to search for
+value = "Light Box Test Complete"
+field = "test"
+mongo = collection.find({field: value}, {"events"})
+
+cursor = mongo
+list_cur = list(cursor)
+json_data = dumps(list_cur, indent=2)
+print(json_data)
