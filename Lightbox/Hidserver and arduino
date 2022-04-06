@@ -51,6 +51,10 @@ void hidserver_Read()
   {
     while (!Serial.available());
     x = Serial.readString().toInt();
+    if(x > 255)
+    {
+      x = 255;
+    }
    
   }
   
