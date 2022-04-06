@@ -2,11 +2,11 @@
 /*
 
 */
-// Motor A connections
+// Motor H Bridge connection A
 int enA = 9;
 int in1 = 8;
 int in2 = 7;
-// Motor B connections
+// Motor H Bridge connection B
 int enB = 3;
 int in3 = 5;
 int in4 = 4;
