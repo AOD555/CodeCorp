@@ -1,0 +1,104 @@
+// We have combined hidserver with controlling the light box with the following code. The microcontroller is a Arduino Uno
+/*
+
+*/
+// Motor A connections
+int enA = 9;
+int in1 = 8;
+int in2 = 7;
+// Motor B connections
+int enB = 3;
+int in3 = 5;
+int in4 = 4;
+int x = 0; 
+int testing = 6;
+
+void setup()
+{
+  pinMode(enA, OUTPUT);
+	pinMode(enB, OUTPUT);
+	pinMode(in1, OUTPUT);
+	pinMode(in2, OUTPUT);
+	pinMode(in3, OUTPUT);
+	pinMode(in4, OUTPUT);
+	
+	
+	// Turn off motors - Initial state
+	digitalWrite(in1, LOW);
+	digitalWrite(in2, LOW);
+	digitalWrite(in3, LOW);
+	digitalWrite(in4, LOW);
+	
+  // Serial turn on Has to be 115200 for it to work!
+  Serial.begin(115200);  
+  
+  // Setup for reading items from hidserver
+  Serial.setTimeout(1);
+  pinMode(testing,OUTPUT);  
+}
+
+void loop() {
+  hidserver_Read();
+  directionControl(x);
+  lightControl(x);
+  check(x);
+  
+    
+}
+
+void hidserver_Read()
+  {
+    while (!Serial.available());
+    x = Serial.readString().toInt();
+   
+  }
+  
+  
+  
+// This function lets you control direction of PWM waves
+void directionControl(int input) {
+// For PWM maximum possible values are 0 to 255
+	analogWrite(enA, 255);
+	analogWrite(enB, 255);
+
+	// Turn on Light A & B via H bridge 
+	digitalWrite(in1, HIGH);
+	digitalWrite(in2, LOW);  
+	Serial.println("\nChanging direction\n"); // Changing PWM direction
+	digitalWrite(in3, LOW);
+	digitalWrite(in4, HIGH);
+	delay(2000);
+
+
+	// Turn off pins
+	digitalWrite(in1, LOW);
+	digitalWrite(in2, LOW);
+	digitalWrite(in3, LOW);
+	digitalWrite(in4, LOW);
+}
+
+// This function will set the light level according to the input
+void lightControl(int input) {
+	// Turn on Lights via H bridge
+	digitalWrite(in1, LOW);
+	digitalWrite(in2, HIGH);
+	digitalWrite(in3, LOW);
+	digitalWrite(in4, HIGH);
+	
+	// Setting the light level for the lights
+	analogWrite(enA, input);
+	analogWrite(enB, input);
+}
+// This code is used for debugging. Will be removed from final version
+void check(int input)
+  {
+    if(input == 1)
+    {
+      digitalWrite(testing,HIGH);
+    }
+    else if(x == 0)
+    {
+      digitalWrite(testing,LOW);
+    }
+  }
+  
