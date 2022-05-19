@@ -1,0 +1,160 @@
+/*
+
+*/
+// Motor H Bridge connection A
+int enA = 9;
+int in1 = 8;
+int in2 = 7;
+//Motor H Bridge connection B
+int enB = 3;
+int in3 = 5;
+int in4 = 4;
+
+
+int x = -1 ; 
+
+int firstLight = 0;
+int secondLight = 0;
+int testing = 6;
+String input1;
+int input2 = 0;
+void directionControl(int x);
+void lightControl(int x);
+void check(int x);
+
+// setup for millis
+int period = 5000;
+unsigned long time_now = 0;
+int trigger = 0;
+int readSignal = 0;
+
+// Interval is how long we wait
+int interval=1000;
+// Tracks the time since last event fired
+unsigned long previousMillis=0;
+
+void setup()
+{
+  pinMode(enA, OUTPUT);
+	pinMode(enB, OUTPUT);
+	pinMode(in1, OUTPUT);
+	pinMode(in2, OUTPUT);
+	pinMode(in3, OUTPUT);
+	pinMode(in4, OUTPUT);
+	
+	
+	// Turn off motors - Initial state
+	digitalWrite(in1, LOW);
+	digitalWrite(in2, LOW);
+	
+	digitalWrite(in3, LOW);
+	digitalWrite(in4, LOW);
+	
+  // Serial turn on Has to be 115200 for it to work!
+  Serial.begin(115200);  
+  
+  // Setup for reading items from hidserver
+  Serial.setTimeout(1);
+  pinMode(testing,OUTPUT);  
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  
+  hidserver_Read();
+  directionControl(x);
+  lightControl(x);
+  
+  
+    
+}
+// Put in seperate Arduino ide "(insert name here w/out parentheses).ino" file
+
+void lightLevels()
+{
+  secondLight = x;
+  
+        
+        trigger = 1;
+        x = -1;
+        
+ 
+}
+void hidserver_Read()
+  {
+    
+    while (!Serial.available());
+    
+    x = Serial.readString().toInt();
+    unsigned long currentMillis = millis();
+
+    if( x > -1)
+    {
+      trigger = 0;
+    }
+    
+    
+    if ( x > -1 && trigger == 0) 
+    {
+      firstLight = x;
+      trigger = 1;
+      if ((unsigned long)(currentMillis - previousMillis) >= interval) {
+      // It's time to do something!
+          lightLevels();
+          
+
+      // Use the snapshot to set track time until next event
+      previousMillis = currentMillis;
+      }
+
+      
+    }
+    
+    
+    
+    
+ 
+    
+   
+  }
+  
+
+// This function lets you control direction of PWM waves
+void directionControl(int input) {
+// For PWM maximum possible values are 0 to 255
+	analogWrite(enA, 255);
+	analogWrite(enB, 255);
+
+	// Turn on Light A & B via H bridge 
+	digitalWrite(in1, LOW);
+	digitalWrite(in2, HIGH);  
+	Serial.println("\nChanging direction\n"); // Changing PWM direction
+	digitalWrite(in3, LOW);
+	digitalWrite(in4, HIGH);
+// 	delay(2000);
+
+
+	// Turn off pins
+// 	digitalWrite(in1, LOW);
+// 	digitalWrite(in2, LOW);
+// 	digitalWrite(in3, LOW);
+// 	digitalWrite(in4, LOW);
+}
+
+// This function will set the light level according to the input
+void lightControl(int input) {
+	// Turn on Lights via H bridge
+	digitalWrite(in1, LOW);
+	digitalWrite(in2, HIGH);
+	
+	digitalWrite(in3, LOW);
+	digitalWrite(in4, HIGH);
+	
+
+	analogWrite(enA, firstLight);
+	analogWrite(enB, secondLight);
+	Serial.println(firstLight);
+	Serial.println(secondLight);
+}
+
+  
