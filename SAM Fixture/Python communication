@@ -1,0 +1,26 @@
+# Website to use
+# https://docs.arduino.cc/built-in-examples/strings/StringAppendOperator
+# Importing Libraries
+import serial
+import time
+import serial
+import time
+
+arduino = serial.Serial(port='COM3', baudrate=115200, timeout=.1)
+def write_read(x):
+    arduino.write(bytes(x, 'utf-8'))
+    if(x != 'HELP'):
+        time.sleep(0.05)
+        print("\r")
+    data = arduino.readline()
+    print(data)
+    return data
+while True:
+    command = input("Enter a Command: ").strip() # Taking input from user
+    write_read(command)
+
+    if(command == "HELP"):
+        for y in range (0,10):
+            print("\r")
+        for x in range (0,19):
+            write_read(command)
