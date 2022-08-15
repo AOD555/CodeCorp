@@ -80,7 +80,7 @@ void setup() {
 void loop()
 {
   Serial.println(DIRECTION);
-  hidserver_Read();
+  
   
   
   if( DIRECTION == 3)
